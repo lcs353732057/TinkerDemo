@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
                 showInfo(MainActivity.this);
             }
         });
-        Toast.makeText(MainActivity.this,"patch is exist=========",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this,"Hot fix Scuess!!!!!",Toast.LENGTH_SHORT).show();
     }
 
     public boolean showInfo(Context context) {
