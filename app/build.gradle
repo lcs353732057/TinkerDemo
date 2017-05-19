@@ -1,0 +1,116 @@
+apply plugin: 'com.android.application'
+//apply tinker插件
+apply plugin: 'com.tencent.tinker.patch'
+
+tinkerPatch {
+    //有问题的apk的地址
+    oldApk = "/Users/zhoumanqing/Workspace/TinkerDemo/app/oldApk/app-release.apk"
+    ignoreWarning = true
+    useSign = true
+    buildConfig {
+        tinkerId = "1.0"
+    }
+    packageConfig {
+        //写这个为了修复一个bug,详见github issue #22
+        configField("TINKER_ID", "1.0")
+    }
+    dex {
+        dexMode = "jar"
+        pattern = ["classes*.dex", "assets/secondary-dex-?.jar"]
+        loader = ["com.tencent.tinker.loader.*", "ook.yzx.tinker.Application"]
+    }
+    lib {
+        pattern = ["lib/armeabi/*.so", "lib/arm64-v8a/*.so", "lib/armeabi-v7a/*.so", "lib/mips/*.so", "lib/mips64/*.so", "lib/x86/*.so", "lib/x86_64/*.so"]
+    }
+    res {
+        pattern = ["res/*", "assets/*", "resources.arsc", "AndroidManifest.xml"]
+        largeModSize = 100
+    }
+    sevenZip {
+        zipArtifact = "com.tencent.mm:SevenZip:1.1.10"
+    }
+}
+
+def javaVersion = JavaVersion.VERSION_1_7
+
+def taskName = "release"
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+
+    compileOptions {
+        sourceCompatibility javaVersion
+        targetCompatibility javaVersion
+    }
+    //recommend
+    dexOptions {
+        jumboMode = true
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file("./keystore/android_keystore.jks")
+                storePassword "123456"
+                keyAlias "key0"
+                keyPassword "123456"
+            } catch (ex) {
+                throw new InvalidUserDataException(ex.toString())
+            }
+        }
+
+        debug {
+            storeFile file("./keystore/android_keystore.jks")
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.example.liaochunsheng.tinkerdemo"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        /**
+         * you can use multiDex and install it in your ApplicationLifeCycle implement
+         */
+        multiDexEnabled true
+        /**
+         * buildConfig can change during patch!
+         * we can use the newly value when patch
+         */
+        buildConfigField "String", "MESSAGE", "\"I am the base apk\""
+//        buildConfigField "String", "MESSAGE", "\"I am the patch apk\""
+        /**
+         * client version would update with patch
+         * so we can get the newly git version easily!
+         */
+        buildConfigField "String", "TINKER_ID", "\"1.0\""
+        buildConfigField "String", "PLATFORM",  "\"all\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile('com.tencent.tinker:tinker-android-anno:1.6.2')
+    compile('com.tencent.tinker:tinker-android-lib:1.6.2')
+    testCompile 'junit:junit:4.12'
+}

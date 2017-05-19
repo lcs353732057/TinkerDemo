@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/loadPatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="load Patch" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="showInfo但是福利时间到 吉林省的开发建设的浪费 lsdkfjsdlfsdjFJS答复"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/showInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="showInfo"
+        android:visibility="visible" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="通过热修复技术实现"
+        android:visibility="visible" />
+
+</LinearLayout>
